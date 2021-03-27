@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Reset API</legend>
+                <h2>This will delete all data such as logs and clear the `{{ api.title }}` API storage. Are you sure?</h2>
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-danger" type="submit">Reset</button>
+                <a class="btn btn-outline-secondary" href="{% url 'manager-api' api.uid %}">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

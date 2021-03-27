@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+{% block additional %}
+    <link rel="stylesheet" type="text/css" href="{% static 'manager/css/home.css' %}">
+    <script src="{% static 'manager/js/home.js' %}"></script>
+{% endblock %}
+{% block content %}
+    <h1>Dashboard</h1>
+    <div class="mt-4">
+        {% for api in object_list %}
+            <a href="{% url 'manager-api' api.uid %}">
+                <div class="container-api d-flex">
+                    <div class="d-flex">
+                        <div class="container-api-status align-self-center mr-3 d-none d-md-block">
+                            {% if api.enabled %}
+                                {% if api.compiles is None %}
+                                    &#128237; <!--mailbox-->
+                                {% elif api.compiles %}
+                                    &#128994; <!--green circle-->
+                                {% else %}
+                                    &#10060; <!--red cross mark-->
+                                {% endif %}
+                            {% else %}
+                                &#128164; <!--zzz-->
+                            {% endif %}
+                        </div>
+                        <div class="container-api-info d-flex">
+                            <div>
+                                <h4 class="api-title">{{ api.title }}</h4>
+                                <br>
+                                <small class="text-muted">
+                                    {% if api.enabled %}
+                                        {% if api.compiles is None %}
+                                            Waiting for first request...
+                                        {% elif api.compiles %}
+                                            Handling requests
+                                        {% else %}
+                                            Compilation error!
+                                        {% endif %}
+                                    {% else %}
+                                        Disabled
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ml-auto d-sm-block d-md-flex">
+                        {% if api.enabled %}
+                            <div class="align-self-center copy-url-button" style="display: none">
+                                <a onclick='copyUrlToClipboard("{{ api.get_absolute_url }}")'
+                                   class="btn btn-outline-primary m-1">
+                                    Copy&nbsp;URL
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="align-self-center">
+                                <a href="{% url 'api-enable' api.uid %}?next={% url 'manager-home' %}"
+                                   class="btn btn-outline-primary m-1">Enable</a>
+                            </div>
+                        {% endif %}
+                        <div class="align-self-center">
+                            <a href="{% url 'manager-update-api' api.uid %}"
+                               class="btn btn-outline-info m-1">Update</a>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <hr>
+        {% endfor %}
+    </div>
+{% endblock content %}

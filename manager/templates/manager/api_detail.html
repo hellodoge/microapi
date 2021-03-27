@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+{% block additional %}
+    <link rel="stylesheet" type="text/css" href="{% static 'manager/css/api_detail.css' %}">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.7.1/build/styles/default.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.7.1/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script src="{% static 'manager/js/api_detail.js' %}"></script>
+{% endblock additional %}
+{% block content %}
+    <h2 class="api-title ml-1">{{ object.title }}</h2>
+    <small class="text-muted ml-1">
+        {% if object.enabled %}
+            {% if object.compiles is None %}
+                Waiting for first request...
+            {% elif object.compiles %}
+                Handling requests
+            {% else %}
+                Compilation error!
+            {% endif %}
+        {% else %}
+            Disabled
+        {% endif %}
+    </small>
+    <div class="d-block d-md-flex mt-4 mb-2">
+        <div class="d-block api-url-field">
+            <div class="input-group" onclick="copy_api_url();">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">URL</span>
+                </div>
+                <!--suppress HtmlFormInputWithoutLabel -->
+                <input value="{{ ABSOLUTE_ROOT }}{{ object.get_absolute_url }}"
+                       class="form-control" id="api-url-field" readonly>
+            </div>
+        </div>
+        <div class="ml-auto d-inline-flex">
+            <a href="{% url 'manager-update-api' object.uid %}"
+               class="btn btn-outline-info m-1">Update</a>
+            {% if object.enabled %}
+                <a href="{% url 'api-disable' object.uid %}?next={% url 'manager-api' object.uid %}"
+                   class="btn btn-outline-warning m-1">Disable</a>
+            {% else %}
+                <a href="{% url 'api-enable' object.uid %}?next={% url 'manager-api' object.uid %}"
+                   class="btn btn-outline-warning m-1">Enable</a>
+            {% endif %}
+            <a href="{% url 'manager-reset-api' object.uid %}" class="btn btn-outline-danger m-1">Delete&nbsp;data</a>
+            <a href="{% url 'manager-delete-api' object.uid %}" class="btn btn-outline-danger m-1">Delete&nbsp;API</a>
+        </div>
+    </div>
+    <pre><code id="python_code" class="language-python">{{ object.python_code }}</code></pre>
+    {% if logs_page.object_list|length %}
+        <div class="container bg-dark rounded text-white p-4 mb-4">
+            <h4>Logs</h4>
+            {% for message in logs_page.object_list %}
+                <small class="text-white-50">{{ message.time_logged|date:'Y-m-d H:m:s' }}</small>
+                <pre class="text-white">{{ message.message }}</pre>
+            {% endfor %}
+            <div class="d-inline-flex">
+                {% if logs_page.has_previous %}
+                    <a class="btn text-white mr-auto" href="?page={{ logs_page.previous_page_number }}">«</a>
+                {% endif %}
+                {% if logs_page.has_next %}
+                    <a class="btn text-white align-self-center" href="?page={{ logs_page.next_page_number }}">»</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock content %}
