@@ -35,5 +35,9 @@ def log(request, storage):
         return 'flag is caught!'
 ```
 
+### Web Interface snippets
+- [Dashboard](https://netpipe.herokuapp.com/aRNiIhBIpmw=1b)
+- [API details](https://netpipe.herokuapp.com/btcx_QcAOLM=19)
+
 ### Notes
 User defined code is being evaluated using [Restricted Python](https://pypi.org/project/RestrictedPython/)
